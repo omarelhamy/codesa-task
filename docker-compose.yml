@@ -1,0 +1,63 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./uploads:/app/uploads
+      - ./reports:/app/reports
+    environment:
+      - VIRUSTOTAL_API_KEY=${VIRUSTOTAL_API_KEY}
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_NAME=pdfscanner
+      - DB_USER=postgres
+      - DB_PASSWORD=password
+      - UPLOADS_DIR=/app/uploads
+      - REPORTS_DIR=/app/reports
+    depends_on:
+      - db
+
+  worker:
+    build:
+      context: .
+      dockerfile: worker/Dockerfile
+    volumes:
+      - ./uploads:/app/uploads
+      - ./reports:/app/reports
+    environment:
+      - VIRUSTOTAL_API_KEY=${VIRUSTOTAL_API_KEY}
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_NAME=pdfscanner
+      - DB_USER=postgres
+      - DB_PASSWORD=password
+      - UPLOADS_DIR=/app/uploads
+      - REPORTS_DIR=/app/reports
+    depends_on:
+      - db
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+
+  db:
+    image: postgres:13
+    environment:
+      POSTGRES_DB: pdfscanner
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+volumes:
+  postgres_data:
