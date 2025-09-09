@@ -42,3 +42,7 @@ cd frontend && npm install && npm start
 - `GET /api/tasks` - List tasks
 - `GET /api/tasks/{id}` - Task details
 - `GET /api/reports/{id}` - Download report
+
+## Screenshot
+
+![PDF Scanner Interface](screenshot.png)
