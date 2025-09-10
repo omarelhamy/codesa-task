@@ -40,7 +40,7 @@ class VirusTotalScanner:
     def scan_file(self, file_path):
         try:
             file_id = self.upload_file(file_path)
-            print(f"File uploaded, ID: {file_id}")
+            print(f"File uploaded: {file_id}")
             
             while True:
                 analysis = self.get_analysis(file_id)
@@ -49,10 +49,10 @@ class VirusTotalScanner:
                 if status == "completed":
                     return analysis
                 elif status == "queued":
-                    print("Scan queued, waiting...")
+                    print("Scan queued")
                     time.sleep(15)
                 else:
-                    print(f"Scan status: {status}")
+                    print(f"Status: {status}")
                     time.sleep(10)
         
         except Exception as e:
@@ -97,20 +97,20 @@ def process_task(task_id):
         task.completed_at = datetime.utcnow()
         db.commit()
         
-        print(f"Task {task_id} completed")
+        print(f"Task completed: {task_id}")
         
     except Exception as e:
         task.status = "FAILED"
         task.error_message = str(e)
         task.completed_at = datetime.utcnow()
         db.commit()
-        print(f"Task {task_id} failed: {str(e)}")
+        print(f"Task failed: {task_id}")
     
     finally:
         db.close()
 
 def signal_handler(sig, frame):
-    print("Shutting down worker...")
+    print("Shutting down")
     sys.exit(0)
 
 signal.signal(signal.SIGTERM, signal_handler)
@@ -133,7 +133,7 @@ def main():
         except KeyboardInterrupt:
             break
         except Exception as e:
-            print(f"Worker error: {e}")
+            print(f"Error: {e}")
             time.sleep(5)
 
 if __name__ == "__main__":

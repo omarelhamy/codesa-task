@@ -43,6 +43,19 @@ cd frontend && npm install && npm start
 - `GET /api/tasks/{id}` - Task details
 - `GET /api/reports/{id}` - Download report
 
+## Testing
+
+```bash
+# Run all tests
+py run_tests.py
+
+# Run backend tests only
+cd backend && py -m pytest test_api.py -v
+
+# Run worker tests only
+cd worker && py -m pytest test_worker.py -v
+```
+
 ## Screenshot
 
 ![PDF Scanner Interface](screenshot.png)
