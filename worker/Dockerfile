@@ -6,6 +6,7 @@ COPY worker/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY models.py .
+COPY database.py .
 COPY worker/ .
 
 CMD ["python", "worker.py"]

@@ -39,7 +39,7 @@ services:
       - UPLOADS_DIR=/app/uploads
       - REPORTS_DIR=/app/reports
     depends_on:
-      - db
+      - backend
 
   frontend:
     build: ./frontend

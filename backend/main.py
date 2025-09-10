@@ -5,7 +5,8 @@ import os
 import uuid
 import sys
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from models import Task, SessionLocal
+from models import Task
+from database import SessionLocal, create_tables
 
 app = FastAPI()
 
@@ -17,6 +18,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Create database tables
+create_tables()
 
 @app.post("/api/tasks")
 async def create_task(

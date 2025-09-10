@@ -4,10 +4,10 @@ import json
 import requests
 import signal
 import sys
-import os
 from datetime import datetime
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from models import Task, SessionLocal
+from models import Task
+from database import SessionLocal
 
 class VirusTotalScanner:
     def __init__(self, api_key):
@@ -41,7 +41,7 @@ class VirusTotalScanner:
         try:
             file_id = self.upload_file(file_path)
             print(f"File uploaded: {file_id}")
-            
+
             while True:
                 analysis = self.get_analysis(file_id)
                 status = analysis["data"]["attributes"]["status"]
@@ -104,13 +104,11 @@ def process_task(task_id):
         task.error_message = str(e)
         task.completed_at = datetime.utcnow()
         db.commit()
-        print(f"Task failed: {task_id}")
     
     finally:
         db.close()
 
 def signal_handler(sig, frame):
-    print("Shutting down")
     sys.exit(0)
 
 signal.signal(signal.SIGTERM, signal_handler)
