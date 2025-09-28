@@ -21,7 +21,9 @@ function App() {
 
   const fetchTasks = async () => {
     try {
-      const response = await axios.get('/api/tasks');
+      // Use proxy in development, environment variable in Docker
+      const apiBaseUrl = process.env.REACT_APP_API_BASE_URL || '';
+      const response = await axios.get(`${apiBaseUrl}/api/tasks`);
       setTasks(response.data);
     } catch (error) {
       console.error('Failed to fetch tasks:', error);

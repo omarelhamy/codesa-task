@@ -62,7 +62,8 @@ const FileUpload: React.FC<FileUploadProps> = ({ onTaskCreated }) => {
       formData.append('description', description);
       formData.append('file', file);
       
-      await axios.post('/api/tasks', formData, {
+      const apiBaseUrl = process.env.REACT_APP_API_BASE_URL;
+      await axios.post(`${apiBaseUrl}/api/tasks`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },

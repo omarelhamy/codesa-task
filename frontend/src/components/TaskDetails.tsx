@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 
 interface Task {
@@ -38,23 +38,24 @@ const TaskDetails: React.FC<TaskDetailsProps> = ({ task }) => {
   const [report, setReport] = useState<ScanReport | null>(null);
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    if (task.status === 'COMPLETED' && task.report_path) {
-      fetchReport();
-    }
-  }, [task]);
-
-  const fetchReport = async () => {
+  const fetchReport = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await axios.get(`/api/reports/${task.id}`);
+      const apiBaseUrl = process.env.REACT_APP_API_BASE_URL;
+      const response = await axios.get(`${apiBaseUrl}/api/reports/${task.id}`);
       setReport(response.data);
     } catch (error) {
       console.error('Failed to fetch report:', error);
     } finally {
       setLoading(false);
     }
-  };
+  }, [task.id]);
+
+  useEffect(() => {
+    if (task.status === 'COMPLETED' && task.report_path) {
+      fetchReport();
+    }
+  }, [task, fetchReport]);
 
   const getVirusTotalUrl = () => {
     if (report?.data?.id) {
@@ -150,7 +151,7 @@ const TaskDetails: React.FC<TaskDetailsProps> = ({ task }) => {
                 
                 <div className="flex space-x-2">
                   <a
-                    href={`/api/reports/${task.id}`}
+                    href={`${process.env.REACT_APP_API_BASE_URL}/api/reports/${task.id}`}
                     download={`${task.filename}_scan_report.json`}
                     className="bg-primary-gold text-white px-4 py-2 rounded hover:bg-primary-gold-dark transition-colors"
                   >

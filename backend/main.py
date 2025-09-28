@@ -1,4 +1,4 @@
-from fastapi import FastAPI, UploadFile, File, Form, HTTPException
+from fastapi import FastAPI, UploadFile, File, Form, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 import os
@@ -6,7 +6,8 @@ import uuid
 import sys
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from models import Task
-from database import SessionLocal, create_tables
+from database import SessionLocal, create_tables, get_db
+from sqlalchemy.orm import Session
 
 app = FastAPI()
 
@@ -24,7 +25,8 @@ create_tables()
 @app.post("/api/tasks")
 async def create_task(
     description: str = Form(...),
-    file: UploadFile = File(...)
+    file: UploadFile = File(...),
+    db: Session = Depends(get_db)
 ):
     if not file.filename.endswith('.pdf'):
         raise HTTPException(status_code=400, detail="Only PDF files are allowed")
@@ -39,7 +41,7 @@ async def create_task(
         content = await file.read()
         buffer.write(content)
     
-    db = SessionLocal()
+    # db = SessionLocal()
     task = Task(
         task_id=task_id,
         description=description,
@@ -49,7 +51,7 @@ async def create_task(
     db.add(task)
     db.commit()
     db.refresh(task)
-    db.close()
+    # db.close()
     
     return {"task_id": task_id, "status": "PENDING"}
 

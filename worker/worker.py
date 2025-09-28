@@ -119,9 +119,8 @@ def main():
     
     while True:
         try:
-            db = SessionLocal()
-            pending_tasks = db.query(Task).filter(Task.status == "PENDING").all()
-            db.close()
+            with SessionLocal() as db:
+                pending_tasks = db.query(Task).filter(Task.status == "PENDING").all()
             
             for task in pending_tasks:
                 process_task(task.task_id)
